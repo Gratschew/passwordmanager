@@ -11,7 +11,7 @@ import { IconButton } from "@mui/material";
 export default function ButtonAppBar({ colorMode, changeColorMode }) {
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" color={"error"}>
+      <AppBar position="static">
         <Toolbar>
           <Typography>Logout</Typography>
           <Typography

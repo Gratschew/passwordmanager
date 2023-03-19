@@ -79,9 +79,16 @@ const SignUp = ({ setIsLoginHandler }) => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            border: "0px solid #ccc",
+            boxShadow: "0px 2px 20px rgba(0, 0, 0, 0.2)",
+            borderRadius: "10px",
+            padding: "24px",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+          <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
