@@ -31,7 +31,7 @@ const LogIn = ({ setIsLoginHandler }) => {
         <Typography component="h1" variant="h5">
           Sign In
         </Typography>
-        <Box component="form" onSubmit={null} noValidate sx={{ mt: 1 }}>
+        <Box noValidate sx={{ mt: 1 }}>
           <TextField
             margin="normal"
             required

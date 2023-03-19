@@ -13,16 +13,20 @@ import { LinearProgress } from "@mui/material";
 import zxcvbn from "zxcvbn";
 import { List, ListItem, ListItemIcon, ListItemText } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
+import { useDispatch } from "react-redux";
+import { register } from "../Redux/reducers/AuthReducer";
+import { useSelector } from "react-redux";
+import AuthErrorAlert from "./ErrorComponents/AuthError";
 const SignUp = ({ setIsLoginHandler }) => {
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordStrength, setPasswordStrength] = useState(51);
-
   const [hasLowerCase, setHasLowerCase] = useState(false);
   const [hasUpperCase, setHasUpperCase] = useState(false);
   const [hasDigit, setHasDigit] = useState(false);
   const [hasSpecialChar, setHasSpecialChar] = useState(false);
   const [isLengthValid, setIsLengthValid] = useState(false);
-
+  const dispatch = useDispatch();
   useEffect(() => {
     calculatePwStrength(password);
     calculatePwValidness(password);
@@ -62,6 +66,10 @@ const SignUp = ({ setIsLoginHandler }) => {
     );
   };
 
+  const handleSignUp = () => {
+    dispatch(register({ username: username, password: password }));
+  };
+
   return (
     <>
       <Container component="main" maxWidth="xs">
@@ -79,7 +87,7 @@ const SignUp = ({ setIsLoginHandler }) => {
           <Typography component="h1" variant="h5">
             Sign Up
           </Typography>
-          <Box component="form" onSubmit={null} noValidate sx={{ mt: 1 }}>
+          <Box noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
@@ -87,6 +95,9 @@ const SignUp = ({ setIsLoginHandler }) => {
               id="email"
               label="Email Address"
               name="email"
+              onChange={(e) => {
+                setUsername(e.target.value);
+              }}
             />
             <TextField
               margin="normal"
@@ -165,7 +176,8 @@ const SignUp = ({ setIsLoginHandler }) => {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
-              disabled={!isPwValid()}
+              disabled={!isPwValid() || !username}
+              onClick={handleSignUp}
             >
               Sign Up
             </Button>
@@ -188,6 +200,7 @@ const SignUp = ({ setIsLoginHandler }) => {
           </Box>
         </Box>
       </Container>
+      <AuthErrorAlert></AuthErrorAlert>
     </>
   );
 };
