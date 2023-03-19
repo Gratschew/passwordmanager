@@ -17,6 +17,9 @@ import { useDispatch } from "react-redux";
 import { register } from "../Redux/reducers/AuthReducer";
 import { useSelector } from "react-redux";
 import AuthErrorAlert from "./ErrorComponents/AuthError";
+import KeySafeLogo from "./KeySafeLogo.png";
+import Divider from "@mui/material/Divider";
+import { useTheme } from "@mui/material/styles";
 const SignUp = ({ setIsLoginHandler }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -26,6 +29,7 @@ const SignUp = ({ setIsLoginHandler }) => {
   const [hasDigit, setHasDigit] = useState(false);
   const [hasSpecialChar, setHasSpecialChar] = useState(false);
   const [isLengthValid, setIsLengthValid] = useState(false);
+  const theme = useTheme();
   const dispatch = useDispatch();
   useEffect(() => {
     calculatePwStrength(password);
@@ -79,18 +83,26 @@ const SignUp = ({ setIsLoginHandler }) => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
             border: "0px solid #ccc",
             boxShadow: "0px 2px 20px rgba(0, 0, 0, 0.2)",
             borderRadius: "10px",
             padding: "24px",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
-            <LockOutlinedIcon />
-          </Avatar>
+          <img
+            alt="Logo"
+            src={KeySafeLogo} //replace with your logo image path
+            width={"120px"}
+            style={{
+              filter:
+                theme.palette.mode == "light"
+                  ? "invert(55%) sepia(51%) saturate(5300%) hue-rotate(220deg) brightness(102%) contrast(94%)"
+                  : "invert(100%)",
+            }}
+          />
+          <Box sx={{ mt: 2, mb: 2, width: "80%", margin: "0 auto" }}>
+            <Divider sx={{ mt: 2, mb: 2 }} />
+          </Box>
           <Typography component="h1" variant="h5">
             Sign Up
           </Typography>
@@ -122,14 +134,14 @@ const SignUp = ({ setIsLoginHandler }) => {
               Password should contain at least:
             </Typography>
 
-            <List sx={{ fontSize: 12 }}>
+            <List sx={{ fontSize: 13 }}>
               <ListItem disablePadding>
                 <ListItemIcon>
                   {hasLowerCase && <CheckIcon color="success" />}
                 </ListItemIcon>
                 <ListItemText
-                  primaryTypographyProps={{ sx: { fontSize: 12 } }}
-                  primary="one lowercase letter"
+                  primaryTypographyProps={{ sx: { fontSize: 13 } }}
+                  primary="One lowercase letter"
                 />
               </ListItem>
               <ListItem disablePadding>
@@ -137,8 +149,8 @@ const SignUp = ({ setIsLoginHandler }) => {
                   {hasUpperCase && <CheckIcon color="success" />}
                 </ListItemIcon>
                 <ListItemText
-                  primaryTypographyProps={{ sx: { fontSize: 12 } }}
-                  primary="one uppercase letter"
+                  primaryTypographyProps={{ sx: { fontSize: 13 } }}
+                  primary="One uppercase letter"
                 />
               </ListItem>
               <ListItem disablePadding>
@@ -146,8 +158,8 @@ const SignUp = ({ setIsLoginHandler }) => {
                   {hasDigit && <CheckIcon color="success" />}
                 </ListItemIcon>
                 <ListItemText
-                  primaryTypographyProps={{ sx: { fontSize: 12 } }}
-                  primary="one digit"
+                  primaryTypographyProps={{ sx: { fontSize: 13 } }}
+                  primary="One digit"
                 />
               </ListItem>
               <ListItem disablePadding>
@@ -155,8 +167,8 @@ const SignUp = ({ setIsLoginHandler }) => {
                   {hasSpecialChar && <CheckIcon color="success" />}
                 </ListItemIcon>
                 <ListItemText
-                  primaryTypographyProps={{ sx: { fontSize: 12 } }}
-                  primary="one special character"
+                  primaryTypographyProps={{ sx: { fontSize: 13 } }}
+                  primary="One special character"
                 />
               </ListItem>
               <ListItem disablePadding>
@@ -164,8 +176,8 @@ const SignUp = ({ setIsLoginHandler }) => {
                   {isLengthValid && <CheckIcon color="success" />}
                 </ListItemIcon>
                 <ListItemText
-                  primaryTypographyProps={{ sx: { fontSize: 12 } }}
-                  primary="and is at least 8 characters long"
+                  primaryTypographyProps={{ sx: { fontSize: 13 } }}
+                  primary="And is at least 8 characters long"
                 />
               </ListItem>
             </List>
