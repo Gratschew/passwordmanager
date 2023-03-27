@@ -92,7 +92,7 @@ import KeySafeLogo from "./KeySafeLogo.png";
 import Divider from "@mui/material/Divider";
 import { useTheme } from "@mui/material/styles";
 import { login } from "../Redux/reducers/AuthReducer";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 
 const LogIn = ({ setIsLoginHandler }) => {
@@ -101,9 +101,15 @@ const LogIn = ({ setIsLoginHandler }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  React.useEffect(()=>{
+    console.log(`isLoggedIn: ${isLoggedIn}`)
+  },[isLoggedIn])
+  
   const handleLogin = ()=>{
     console.log(`username: ${username}, password: ${password}`);
     dispatch(login({ username: username, password: password }));
+    console.log(isLoggedIn);
   };
   return (
     <Container component="main" maxWidth="xs">
