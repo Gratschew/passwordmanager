@@ -2,6 +2,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcryptjs';
 import User from '../models/User';
+import jwt from 'jsonwebtoken';
 
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -55,7 +56,50 @@ export const getUsers = async (req: Request, res: Response): Promise<void> => {
 
 
 // TODO: IMPLEMENT LOGIN
+//rate limit requesteille?
+//status 400 hyvä jos login vituiks? tärkee muistaa ettei ilmoiteta onko email oikein vai väärin
+//missä vitus 
 export const login = async (req: Request, res: Response): Promise<void> => {
-  res.status(200).json({ message: 'TODO' });
+
+  try{
+    const { username, password } = req.body;
+    console.log(`user: ${username} password: ${password}`);
+    if(!username || !password){
+      res.status(400).json({messsage: 'incorrect email or password'});
+      return;
+    }
+  
+    console.log("Perkele");
+    const user = await User.findOne({username});
+    if(!user){
+      res.status(400).json({messsage: 'incorrect email or password'});
+      return;
+    }
+  
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    
+    if(!isValidPassword){
+      res.status(400).json({message: 'incorrect email or password'})
+      return;
+    }
+  
+    // //kunnon secret_key, process.env.TOKEN_KEY?
+    // const token = jwt.sign({ username }, 'secret_key', { expiresIn: '1h' });
+  
+    // // const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
+    // //   expiresIn: '1h',
+    // // });
+    // res.cookie('token', token, {
+    //   httpOnly: true,
+    //   secure: process.env.NODE_ENV === 'production',
+    //   sameSite: 'strict',
+    // });
+  
+     res.status(200).json({ message: 'SHould be successful' });
+  }catch(error){
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+ 
 };
   
