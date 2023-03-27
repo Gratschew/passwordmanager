@@ -67,8 +67,17 @@ export const register = (userData) => async (dispatch) => {
 
 export const login = (userData) => async (dispatch) => {
   try {
+    //TODO ei niin suoraa waretusta
+    const { username, password } = userData;
+    const api = process.env.REACT_APP_API_URL;
+    const response = await axios.post(`${api}/auth/login`, {
+      username,
+      password,
+    });
+    console.log(response.data);
     //const response = await loginUser(userData);
     //dispatch(loginSuccess(response.data));
+    //authslice jotain?
   } catch (error) {
     //dispatch(loginFailure(error.message));
   }

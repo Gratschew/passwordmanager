@@ -91,8 +91,20 @@ import Container from "@mui/material/Container";
 import KeySafeLogo from "./KeySafeLogo.png";
 import Divider from "@mui/material/Divider";
 import { useTheme } from "@mui/material/styles";
+import { login } from "../Redux/reducers/AuthReducer";
+import { useDispatch } from "react-redux";
+
+
 const LogIn = ({ setIsLoginHandler }) => {
   const theme = useTheme();
+  const dispatch = useDispatch();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = ()=>{
+    console.log(`username: ${username}, password: ${password}`);
+    dispatch(login({ username: username, password: password }));
+  };
   return (
     <Container component="main" maxWidth="xs">
       <Box
@@ -133,6 +145,9 @@ const LogIn = ({ setIsLoginHandler }) => {
             id="email"
             label="Email Address"
             name="email"
+            onChange = {(e)=>{
+              setUsername(e.target.value);
+            }}
           />
           <TextField
             margin="normal"
@@ -143,9 +158,12 @@ const LogIn = ({ setIsLoginHandler }) => {
             type="password"
             id="password"
             autoComplete="current-password"
+            onChange = {(e)=>{
+              setPassword(e.target.value);
+            }}
           />
 
-          <Button fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+          <Button fullWidth variant="contained" sx={{ mt: 3, mb: 2 }} onClick={handleLogin}>
             Sign In
           </Button>
           <Grid container>

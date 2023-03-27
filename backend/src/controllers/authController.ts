@@ -71,6 +71,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
   try{
     const { username, password } = req.body;
+    console.log(req.params.password);
     console.log(`user: ${username} password: ${password}`);
     //turha checkki?
     if(!username || !password){
@@ -98,11 +99,11 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       expiresIn: '1h',
     });
 
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: NODE_ENV === 'production',
-      sameSite: 'strict',
-    });
+    // res.cookie('token', token, {
+    //   httpOnly: true,
+    //   secure: NODE_ENV === 'production',
+    //   sameSite: 'strict',
+    // });
   
      res.status(200).json({ message: 'success?' });
   }catch(error){
