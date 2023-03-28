@@ -16,7 +16,6 @@ import Divider from "@mui/material/Divider";
 import { useTheme } from "@mui/material/styles";
 import { login } from "../Redux/reducers/AuthReducer";
 import { useDispatch, useSelector } from "react-redux";
-import ValidateCookie from "./utils/ValidateCookie";
 
 const LogIn = ({ setIsLoginHandler }) => {
   const theme = useTheme();
@@ -25,12 +24,7 @@ const LogIn = ({ setIsLoginHandler }) => {
   const [password, setPassword] = useState("");
 
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
-  React.useEffect(()=>{
-    console.log(`isLoggedIn: ${isLoggedIn}`)
-    const valiCookie = ValidateCookie();
-    console.log(`Cookie Validated : ${valiCookie}`);
-  },[isLoggedIn])
-  
+
   const handleLogin = ()=>{
     console.log(`username: ${username}, password: ${password}`);
     dispatch(login({ username: username, password: password }));
@@ -52,7 +46,7 @@ const LogIn = ({ setIsLoginHandler }) => {
       >
         <img
           alt="Logo"
-          src={KeySafeLogo} //replace with your logo image path
+          src={KeySafeLogo}
           width={"120px"}
           style={{
             filter:

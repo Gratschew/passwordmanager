@@ -66,6 +66,7 @@ export const register = (userData) => async (dispatch) => {
   }
 };
 
+//withCredentials vai ei?
 export const login = (userData) => async (dispatch) => {
   try {
     const { username, password } = userData;
@@ -76,14 +77,6 @@ export const login = (userData) => async (dispatch) => {
     },{
       withCredentials: true,
     });
-    console.log(response.data);
-    
-    
-    //const token = response.data.token;
-    const token = Cookies.get("token")
-
-    console.log(token);
-    Cookies.set('token', token, { expires: 1/24 });
     dispatch(loginSuccess());
   } catch (error) {
     dispatch(loginFailure(error.message));
