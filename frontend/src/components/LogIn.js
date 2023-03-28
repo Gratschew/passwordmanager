@@ -27,7 +27,8 @@ const LogIn = ({ setIsLoginHandler }) => {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   React.useEffect(()=>{
     console.log(`isLoggedIn: ${isLoggedIn}`)
-    ValidateCookie();
+    const valiCookie = ValidateCookie();
+    console.log(`Cookie Validated : ${valiCookie}`);
   },[isLoggedIn])
   
   const handleLogin = ()=>{

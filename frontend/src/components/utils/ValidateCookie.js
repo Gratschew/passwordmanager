@@ -1,18 +1,15 @@
 import Cookies from 'js-cookie';
 import jwt_decode from 'jwt-decode';
 
-
+//luultavasti turha funktio, ei pitäis valitoida frontis. 
 const ValidateCookie = ()=>{
     const token = Cookies.get('token');
     if(token){
         try{
-            console.log("on Token")
-            console.log(token)
             const decodedToken = jwt_decode(token)
-            console.log("pysty dekodaa")
             return decodedToken.exp > Date.now() / 1000;
         }catch(error){
-            //Cookies.remove('token');
+            Cookies.remove('token');
             return false;
         }
     }else {
