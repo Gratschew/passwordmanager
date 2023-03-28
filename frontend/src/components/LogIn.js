@@ -26,9 +26,7 @@ const LogIn = ({ setIsLoginHandler }) => {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   const handleLogin = ()=>{
-    console.log(`username: ${username}, password: ${password}`);
     dispatch(login({ username: username, password: password }));
-    console.log(isLoggedIn);
   };
   return (
     <Container component="main" maxWidth="xs">
