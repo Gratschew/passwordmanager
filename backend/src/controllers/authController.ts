@@ -63,21 +63,12 @@ export const getUsers = async (req: Request, res: Response): Promise<void> => {
 };
 
 
-// TODO: IMPLEMENT LOGIN
 //rate limit requesteille?
-//status 400 hyvä jos login vituiks? tärkee muistaa ettei ilmoiteta onko email oikein vai väärin
-//missä vitus 
 export const login = async (req: Request, res: Response): Promise<void> => {
 
   try{
     const { username, password } = req.body;
-    console.log(`user: ${username} password: ${password}`);
-    //turha checkki?
-    if(!username || !password){
-      res.status(400).json({messsage: 'incorrect email or password'});
-      return;
-    }
-  
+
     const user = await User.findOne({username});
     if(!user){
       res.status(400).json({messsage: 'incorrect email or password'});
@@ -97,13 +88,11 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     const token = jwt.sign({ userId: user.id }, JWT_KEY, {
       expiresIn: '1h',
     });
-    console.log(token);
     res.cookie('token', token, {
       httpOnly: true,
       secure: NODE_ENV === 'production',
       sameSite: 'strict',
     });
-  
      res.status(200).json({ message: 'success?' });
   }catch(error){
     console.error(error);
