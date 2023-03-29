@@ -14,7 +14,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 const allowedOrigins = ['http://localhost:3000', 'http://localhost:3001'];
 app.use(cors({
-  origin: allowedOrigins
+  origin: allowedOrigins,
+  credentials: true
 }));
 
 app.use('/', routes);

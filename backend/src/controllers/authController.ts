@@ -2,6 +2,15 @@
 import express, { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcryptjs';
 import User from '../models/User';
+import jwt from 'jsonwebtoken';
+
+import dotenv from 'dotenv';
+dotenv.config();
+const {
+    JWT_KEY,
+    NODE_ENV
+  } = process.env;
+
 
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -54,8 +63,40 @@ export const getUsers = async (req: Request, res: Response): Promise<void> => {
 };
 
 
-// TODO: IMPLEMENT LOGIN
+//rate limit requesteille?
 export const login = async (req: Request, res: Response): Promise<void> => {
-  res.status(200).json({ message: 'TODO' });
+
+  try{
+    const { username, password } = req.body;
+
+    const user = await User.findOne({username});
+    if(!user){
+      res.status(400).json({messsage: 'incorrect email or password'});
+      return;
+    }
+  
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    
+    if(!isValidPassword){
+      res.status(400).json({message: 'incorrect email or password'})
+      return;
+    }
+  
+    if(!JWT_KEY){
+      throw new Error('JWT_SECRET not set!')
+    }
+    const token = jwt.sign({ userId: user.id }, JWT_KEY, {
+      expiresIn: '1h',
+    });
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: NODE_ENV === 'production',
+      sameSite: 'strict',
+    });
+     res.status(200).json({ message: 'success?' });
+  }catch(error){
+    res.status(500).json({ message: 'Internal server error' });
+  }
+ 
 };
   

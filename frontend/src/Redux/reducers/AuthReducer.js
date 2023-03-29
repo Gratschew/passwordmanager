@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import Cookies from 'js-cookie';
 import axios from "axios";
 const initialState = {
   isLoggedIn: false,
@@ -65,12 +66,20 @@ export const register = (userData) => async (dispatch) => {
   }
 };
 
+//withCredentials vai ei?
 export const login = (userData) => async (dispatch) => {
   try {
-    //const response = await loginUser(userData);
-    //dispatch(loginSuccess(response.data));
+    const { username, password } = userData;
+    const api = process.env.REACT_APP_API_URL;
+    const response = await axios.post(`${api}/auth/login`, {
+      username,
+      password,
+    },{
+      withCredentials: true,
+    });
+    dispatch(loginSuccess());
   } catch (error) {
-    //dispatch(loginFailure(error.message));
+    dispatch(loginFailure(error.message));
   }
 };
 
