@@ -18,7 +18,9 @@ services:
       - DB_HOST=mongo
       - DB_USER=$MONGODB_USER
       - DB_PASSWORD=$MONGODB_PASSWORD
-      - DB_NAME=$MONGODB_DATABASE_NAME   
+      - DB_NAME=$MONGODB_DATABASE_NAME
+      - NODE_ENV=$NODE_ENV
+      - ENCRYPTION_KEY=$ENCRYPTION_KEY
       - PORT=9000
     ports:
         - 9000:9000
