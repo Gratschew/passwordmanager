@@ -52,6 +52,10 @@ const ServiceRow = ({ service }) => {
     setModifyModalOpen(false);
   }
 
+  const handleCopy = () => {
+    navigator.clipboard.writeText(service.password);
+  };
+
   return (
     <TableRow
       key={service._id}
@@ -69,7 +73,7 @@ const ServiceRow = ({ service }) => {
           {showPassword ? <VisibilityOff /> : <Visibility />}
         </IconButton>
       </TableCell>
-      <IconButton>
+      <IconButton onClick={handleCopy}>
           <FileCopyIcon />
         </IconButton>
         <IconButton onClick={handleOpenModifyModal}>
