@@ -5,8 +5,10 @@ import {
   TextField,
   Button,
   IconButton,
-  InputAdornment
+  InputAdornment,
 } from '@mui/material';
+import Typography from "@mui/material/Typography";
+
 import { useDispatch } from 'react-redux';
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
@@ -53,7 +55,7 @@ const ModifyRowModalComponent = ({ open, handleSave, handleClose, service }) => 
     >
       <Fade in={open}>
         <div style={styles.paper}>
-          <h2 id="modal-title">Modify service info</h2>
+          <Typography variant="h6">Modify service info</Typography>
           <form noValidate autoComplete="off">
             <TextField
               id="serviceName"
