@@ -17,6 +17,7 @@ import { useTheme } from "@mui/material/styles";
 import { login } from "../Redux/reducers/AuthReducer";
 import { useDispatch, useSelector } from "react-redux";
 import { getServices } from "../Redux/reducers/ServiceReducer";
+import { createService } from "../Redux/reducers/ServiceReducer";
 
 import {
   Table,
@@ -31,12 +32,20 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import ServiceRow from "./ServiceRow";
+import AddServiceRow from "./addServiceRow";
 
 const Home = ({}) => {
   const dispatch = useDispatch();
 
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const services = useSelector((state) => state.service);
+
+  //TESTI
+  const handleSaveService = ({ serviceName, username, password }) => {
+    // Save the service data to your backend or do something else with it
+    dispatch(createService({ serviceName, username, password }))
+  };
+
 
   useEffect(() => {
     dispatch(getServices());
@@ -70,6 +79,8 @@ const Home = ({}) => {
           padding: "24px",
         }}
       >
+        <Typography variant="h6">Add Service</Typography>
+        <AddServiceRow onSave={handleSaveService}/>
         <Typography variant="h6">Services</Typography>
         <Box sx={{ mt: 2, mb: 2, width: "80%", margin: "0 auto" }}>
           <Divider sx={{ mt: 2, mb: 2 }} />
