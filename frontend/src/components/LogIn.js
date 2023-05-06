@@ -16,6 +16,7 @@ import Divider from "@mui/material/Divider";
 import { useTheme } from "@mui/material/styles";
 import { login } from "../Redux/reducers/AuthReducer";
 import { useDispatch, useSelector } from "react-redux";
+import { CircularProgress } from "@mui/material";
 
 const LogIn = ({ setIsLoginHandler }) => {
   const theme = useTheme();
@@ -23,9 +24,9 @@ const LogIn = ({ setIsLoginHandler }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const auth = useSelector((state) => state.auth);
 
-  const handleLogin = ()=>{
+  const handleLogin = () => {
     dispatch(login({ username: username, password: password }));
   };
   return (
@@ -68,7 +69,7 @@ const LogIn = ({ setIsLoginHandler }) => {
             id="email"
             label="Email Address"
             name="email"
-            onChange = {(e)=>{
+            onChange={(e) => {
               setUsername(e.target.value);
             }}
           />
@@ -81,13 +82,22 @@ const LogIn = ({ setIsLoginHandler }) => {
             type="password"
             id="password"
             autoComplete="current-password"
-            onChange = {(e)=>{
+            onChange={(e) => {
               setPassword(e.target.value);
             }}
           />
 
-          <Button fullWidth variant="contained" sx={{ mt: 3, mb: 2 }} onClick={handleLogin}>
-            Sign In
+          <Button
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+            onClick={handleLogin}
+          >
+            {auth.loading ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              "Sign In"
+            )}
           </Button>
           <Grid container>
             <Grid item xs>

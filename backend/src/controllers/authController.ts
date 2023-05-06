@@ -54,6 +54,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
 export const getUsers = async (req: Request, res: Response): Promise<void> => {
   try {
+    res.setHeader('Cache-Control', 'no-store');
     const users = await User.find();
     res.json(users);
   } catch (error) {
@@ -85,7 +86,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     if(!JWT_KEY){
       throw new Error('JWT_SECRET not set!')
     }
-    const token = jwt.sign({ userId: user.id }, JWT_KEY, {
+    const token = jwt.sign({ userId: user._id }, JWT_KEY, {
       expiresIn: '1h',
     });
     res.cookie('token', token, {
@@ -93,7 +94,21 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       secure: NODE_ENV === 'production',
       sameSite: 'strict',
     });
+    res.set('Cache-Control', 'no-store');
      res.status(200).json({ message: 'success?' });
+  }catch(error){
+    res.status(500).json({ message: 'Internal server error' });
+  }
+ 
+};
+
+export const logout = async (req: Request, res: Response): Promise<void> => {
+  try{
+    
+    //res.cookie('token', '', { expires: new Date(0) });
+    res.cookie('token', '', { expires: new Date(0)});
+    res.set('Cache-Control', 'no-store');
+    res.status(200).json({ message: 'Logout successful' });
   }catch(error){
     res.status(500).json({ message: 'Internal server error' });
   }
