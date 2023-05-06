@@ -4,9 +4,9 @@ import { login } from "../Redux/reducers/AuthReducer";
 import { useDispatch, useSelector } from "react-redux";
 import { getServices, ModifyService } from "../Redux/reducers/ServiceReducer";
 import FileCopyIcon from "@mui/icons-material/FileCopy";
-import EditIcon from '@mui/icons-material/Edit';
+import EditIcon from "@mui/icons-material/Edit";
 import ModifyRowModalComponent from "./modifyServiceRowModal";
-import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteIcon from "@mui/icons-material/Delete";
 
 import {
   TableContainer,
@@ -21,7 +21,6 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { DeleteService } from "../Redux/reducers/ServiceReducer";
 
-
 const ServiceRow = ({ service }) => {
   const dispatch = useDispatch();
 
@@ -34,23 +33,23 @@ const ServiceRow = ({ service }) => {
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
   };
-  const handleOpenModifyModal = () =>{
+  const handleOpenModifyModal = () => {
     setModifyModalOpen(true);
-  }
+  };
 
-  const handleDeleteServiceRow = ()=>{
-    dispatch(DeleteService(service._id))
-  }
+  const handleDeleteServiceRow = () => {
+    dispatch(DeleteService(service._id));
+  };
 
-  const handleSave = (serviceName, username,password) => {
+  const handleSave = (serviceName, username, password) => {
     setModifyModalOpen(false);
     const id = service._id;
-    dispatch(ModifyService({id,serviceName,username,password }))
-  }
+    dispatch(ModifyService({ id, serviceName, username, password }));
+  };
 
-  const handleClose = () =>{
+  const handleClose = () => {
     setModifyModalOpen(false);
-  }
+  };
 
   const handleCopy = () => {
     navigator.clipboard.writeText(service.password);
@@ -73,16 +72,23 @@ const ServiceRow = ({ service }) => {
           {showPassword ? <VisibilityOff /> : <Visibility />}
         </IconButton>
       </TableCell>
-      <IconButton onClick={handleCopy}>
+      <TableCell>
+        <IconButton onClick={handleCopy}>
           <FileCopyIcon />
         </IconButton>
         <IconButton onClick={handleOpenModifyModal}>
           <EditIcon />
         </IconButton>
-        <ModifyRowModalComponent open ={modifyModalOpen} handleSave = {handleSave} handleClose = {handleClose} service = {service}/>
-        <IconButton onClick={handleDeleteServiceRow} >
+        <ModifyRowModalComponent
+          open={modifyModalOpen}
+          handleSave={handleSave}
+          handleClose={handleClose}
+          service={service}
+        />
+        <IconButton onClick={handleDeleteServiceRow}>
           <DeleteIcon />
         </IconButton>
+      </TableCell>
     </TableRow>
   );
 };

@@ -59,7 +59,7 @@ const AddServiceRow = ({ onSave }) => {
         }}
         
         />
-      <Button variant="contained" color="primary" onClick={handleSave}>
+      <Button variant="contained" color="primary" onClick={handleSave} disabled={serviceName == ""|| username =="" || password=="" }>
         +
       </Button>
     </div>
