@@ -1,32 +1,31 @@
 import React, { useState } from 'react';
 import {
   Modal,
-  Backdrop,
   Fade,
   TextField,
   Button,
-  makeStyles,
-  IconButton
-} from '@material-ui/core';
+  IconButton,
+  InputAdornment
+} from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-const useStyles = makeStyles((theme) => ({
+const styles = {
   modal: {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   paper: {
-    backgroundColor: theme.palette.background.paper,
-    boxShadow: theme.shadows[5],
-    padding: theme.spacing(2, 4, 3),
-  },
-}));
+    backgroundColor: '#FFF',
+    boxShadow: '0px 4px 15px rgba(0, 0, 0, 0.2)',
+    borderRadius: '5px',
+    padding: '30px',
+    outline: 'none'
+  }
+};
 
-const ModifyRowModalComponent = ({ open,handleSave, handleClose, service }) => {
-  const dispatch = useDispatch()
-  const classes = useStyles();
+const ModifyRowModalComponent = ({ open, handleSave, handleClose, service }) => {
   const [serviceName, setServiceName] = useState(service.serviceName);
   const [username, setUsername] = useState(service.username);
   const [password, setPassword] = useState(service.password);
@@ -47,17 +46,13 @@ const ModifyRowModalComponent = ({ open,handleSave, handleClose, service }) => {
 
   return (
     <Modal
-      className={classes.modal}
       open={open}
       onClose={handleClose}
       closeAfterTransition
-      BackdropComponent={Backdrop}
-      BackdropProps={{
-        timeout: 500,
-      }}
+      style={styles.modal}
     >
       <Fade in={open}>
-        <div className={classes.paper}>
+        <div style={styles.paper}>
           <h2 id="modal-title">Modify service info</h2>
           <form noValidate autoComplete="off">
             <TextField
@@ -78,10 +73,16 @@ const ModifyRowModalComponent = ({ open,handleSave, handleClose, service }) => {
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={toggleShowPassword}>
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }}
             />
-            <IconButton onClick={toggleShowPassword}>
-              {showPassword ? <VisibilityOff /> : <Visibility />}
-            </IconButton>
           </form>
           <Button onClick={handleSaveClick} variant="contained" color="primary">Save</Button>
           <Button onClick={handleCancel}>Cancel</Button>

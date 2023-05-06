@@ -70,10 +70,11 @@ export const createService = async (req: AuthRequest, res: Response): Promise<vo
       const serviceData = await ServiceData.findById(id);
       if(!serviceData){
         res.status(404).json({ message: 'Service not found' });
+        return;
       }
+      // @ts-ignore
       serviceData.data = {serviceName, username, password}
       await serviceData.save();
-
       const decryptedData = serviceData.decryptData();
       const response = { ...decryptedData, _id: id };      
       res.status(201).json(response);

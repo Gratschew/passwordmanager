@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Button from "@mui/material/Button";
 import  {IconButton}  from "@mui/material";
-import { TextField, TableCell, Input } from '@mui/material';
+import { TextField, InputAdornment } from '@mui/material';
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 //{ onSave }
 const AddServiceRow = ({ onSave }) => {
@@ -30,7 +30,7 @@ const AddServiceRow = ({ onSave }) => {
         size="small"
         value={serviceName}
         onChange={(e) => setServiceName(e.target.value)}
-        style={{ marginRight: '8px' }}
+        style={{ marginRight: '8px', flex: 1 }}
       />
       <TextField
         label="Username"
@@ -38,22 +38,27 @@ const AddServiceRow = ({ onSave }) => {
         size="small"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
-        style={{ marginRight: '8px' }}
+        style={{ marginRight: '8px', flex: 1 }}
       />
       <TextField
+        id="password"
         label="Password"
-        variant="outlined"
         size="small"
         type={showPassword ? "text" : "password"}
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        style={{ marginRight: '8px' }}
-      />
-
-      <IconButton onClick={toggleShowPassword}>
-        {showPassword ? <VisibilityOff /> : <Visibility />}
-      </IconButton>
-
+        style={{ marginRight: '8px', flex: 1 }}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton onClick={toggleShowPassword}>
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </InputAdornment>
+          )
+        }}
+        
+        />
       <Button variant="contained" color="primary" onClick={handleSave}>
         +
       </Button>
