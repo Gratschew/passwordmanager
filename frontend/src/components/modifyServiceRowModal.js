@@ -9,6 +9,7 @@ import {
   IconButton
 } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -29,6 +30,11 @@ const ModifyRowModalComponent = ({ open,handleSave, handleClose, service }) => {
   const [serviceName, setServiceName] = useState(service.serviceName);
   const [username, setUsername] = useState(service.username);
   const [password, setPassword] = useState(service.password);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
 
   const handleSaveClick = () => {
     handleSave(serviceName, username,password);
@@ -69,13 +75,16 @@ const ModifyRowModalComponent = ({ open,handleSave, handleClose, service }) => {
             <TextField
               id="password"
               label="Password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
+            <IconButton onClick={toggleShowPassword}>
+              {showPassword ? <VisibilityOff /> : <Visibility />}
+            </IconButton>
           </form>
-          <IconButton onClick={handleSaveClick}>Save</IconButton>
-          <IconButton onClick={handleCancel}>Cancel</IconButton>
+          <Button onClick={handleSaveClick} variant="contained" color="primary">Save</Button>
+          <Button onClick={handleCancel}>Cancel</Button>
         </div>
       </Fade>
     </Modal>

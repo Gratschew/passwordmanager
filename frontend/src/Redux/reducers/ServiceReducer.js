@@ -33,8 +33,7 @@ const serviceSlice = createSlice({
       state.loading = false;
       state.error = state.error;
     },
-    //Kuuluuko toteuttaa esim tällainen uus pushi vai jotenkin triggeröidä 
-    //uusi lataus
+
     createServiceSuccess: (state, action) => {
       state.data.push(action.payload);
       state.loading = state.loading;
@@ -45,12 +44,6 @@ const serviceSlice = createSlice({
       state.loading = false;
       state.error = action.payload.error;
     },
-    // deleteServiceSuccess: (state, action) => {
-    //   const { id } = action.payload;
-    //   state.data = state.data.filter(service => service.id !== id);
-    //   state.loading = state.loading;
-    //   state.error = state.error;
-    // },
     deleteServiceSuccess: (state, action) => {
       const { id } = action.payload;
       const serviceIndex = state.data.findIndex(service => service.id === id);
@@ -65,12 +58,26 @@ const serviceSlice = createSlice({
       state.loading = false;
       state.error = action.payload.error;
     },
-    
+    modifyServiceSuccess: (state, action) => {
+      const updatedService = action.payload;
+      console.log(updatedService);
+      const index = state.data.findIndex(service => service._id === updatedService._id);
+      if (index !== -1) {
+        state.data[index] = updatedService;
+      }
+      state.loading = false;
+      state.error = null;
+    },
+    modifyServiceFailure: (state, action) => {
+      state.data = state.data;
+      state.loading = false;
+      state.error = action.payload.error;
+    },
     resetState: () => resetedState,
   },
 });
 
-export const { getData, resetState, startLoading, stopLoading, createServiceSuccess, createServiceFailure, deleteServiceSuccess, deleteServiceFailure} =
+export const { getData, resetState, startLoading, stopLoading, createServiceSuccess, createServiceFailure, deleteServiceSuccess, deleteServiceFailure, modifyServiceSuccess, modifyServiceFailure} =
   serviceSlice.actions;
 
 export const getServices = () => async (dispatch) => {
@@ -90,6 +97,7 @@ export const getServices = () => async (dispatch) => {
   } catch (error) {
     dispatch(stopLoading());
   }
+  dispatch(stopLoading());
 };
 
 export default serviceSlice.reducer;
@@ -112,7 +120,6 @@ export const createService = (serviceData) => async (dispatch) => {
     });
     dispatch(createServiceSuccess(response.data));
     dispatch(stopLoading());
-    //dispatch(getData(response.data.service));
   } catch (error) {
     dispatch(createServiceFailure(error.response.data.message));
     dispatch(stopLoading());
@@ -130,7 +137,6 @@ export const DeleteService = (serviceId) => async (dispatch) => {
     },{
       withCredentials: true,
     });
-    // register success
     dispatch(deleteServiceSuccess(serviceId));
     dispatch(stopLoading());
   } catch (error) {
@@ -153,12 +159,10 @@ export const ModifyService = (serviceData) => async (dispatch) => {
     },{
       withCredentials: true,
     });
-    // register success
+    dispatch(modifyServiceSuccess(response.data));
     dispatch(stopLoading());
-    //dispatch(loginSuccess());
-    //dispatch(createServiceSuccess(response.data.service));
   } catch (error) {
-    dispatch(createServiceFailure(error.response.data.message));
+    dispatch(modifyServiceFailure(error.response.data.message));
     dispatch(stopLoading());
   }
 };

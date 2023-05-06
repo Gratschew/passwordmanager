@@ -40,6 +40,7 @@ const ServiceDataSchema = new mongoose.Schema(
       next();
   });
   
+
   ServiceDataSchema.methods.decryptData = function (): IDecryptedData {
       const encryptedArray = this.data.split(':');
       const iv = Buffer.from(encryptedArray.shift(), 'hex');

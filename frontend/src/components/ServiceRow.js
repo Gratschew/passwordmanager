@@ -28,7 +28,6 @@ const ServiceRow = ({ service }) => {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const services = useSelector((state) => state.service);
 
-
   const [modifyModalOpen, setModifyModalOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -69,7 +68,8 @@ const ServiceRow = ({ service }) => {
         <IconButton onClick={toggleShowPassword}>
           {showPassword ? <VisibilityOff /> : <Visibility />}
         </IconButton>
-        <IconButton>
+      </TableCell>
+      <IconButton>
           <FileCopyIcon />
         </IconButton>
         <IconButton onClick={handleOpenModifyModal}>
@@ -79,7 +79,6 @@ const ServiceRow = ({ service }) => {
         <IconButton onClick={handleDeleteServiceRow} >
           <DeleteIcon />
         </IconButton>
-      </TableCell>
     </TableRow>
   );
 };
