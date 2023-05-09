@@ -33,6 +33,7 @@ const addAesKey= async (userId:any, password:any) =>{
   }
 }
 const getAesKey =(userId: any): any | undefined =>{
+  console.log(aesKeys);
   return aesKeys[userId];
 }
 

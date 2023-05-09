@@ -109,13 +109,24 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
 export const logout = async (req: Request, res: Response): Promise<void> => {
   try{
-    
-    //res.cookie('token', '', { expires: new Date(0) });
     res.cookie('token', '', { expires: new Date(0)});
+    
+    const token = req.cookies.token;
+    if(!token){
+      res.status(500).json({ message: 'Internal server error' });
+      return ;
+    }
+    const secret = process.env.JWT_KEY;
+    if(!secret){
+      res.status(500).json({ message: 'Internal server error' });
+      return ;
+    }
+    const decoded = jwt.verify(token, secret);
+    const id =  decoded.userId;
+
+    removeAesKey(id);
     res.set('Cache-Control', 'no-store');
     res.status(200).json({ message: 'Logout successful' });
-
-    console.log(req.body.id);
   }catch(error){
     res.status(500).json({ message: 'Internal server error' });
   }
