@@ -2,14 +2,13 @@ import * as crypto from 'crypto';
 
 interface AesKey {
   userId: any;
-  encryptionKey: Buffer;
+  key: any;
 }
 
-interface AesKeyCache {
-  [userId: string]: AesKey;
-}
 
-const aesKeys: AesKeyCache = {};
+
+var AesKeys : AesKey[] = [];
+
 
 const addAesKey= async (userId:any, password:any) =>{
   try {
@@ -27,18 +26,17 @@ const addAesKey= async (userId:any, password:any) =>{
         }
       });
     });
-    aesKeys[userId] = key;
+    AesKeys.push({userId, key});
   } catch (err) {
     console.error(err);
   }
 }
 const getAesKey =(userId: any): any | undefined =>{
-  console.log(aesKeys);
-  return aesKeys[userId];
+  return AesKeys.find((x)=>x.userId == userId)?.key;
 }
 
 const removeAesKey =(userId: string) =>{
-  delete aesKeys[userId];
+  AesKeys.filter((x)=>x.userId!=userId);
 }
 
 export { addAesKey, getAesKey, removeAesKey };
