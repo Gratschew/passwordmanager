@@ -43,9 +43,8 @@ const Home = ({}) => {
   //TESTI
   const handleSaveService = ({ serviceName, username, password }) => {
     // Save the service data to your backend or do something else with it
-    dispatch(createService({ serviceName, username, password }))
+    dispatch(createService({ serviceName, username, password }));
   };
-
 
   useEffect(() => {
     dispatch(getServices());
@@ -80,7 +79,7 @@ const Home = ({}) => {
         }}
       >
         <Typography variant="h6">Add Service</Typography>
-        <AddServiceRow onSave={handleSaveService}/>
+        <AddServiceRow onSave={handleSaveService} />
         <Typography variant="h6">Services</Typography>
         <Box sx={{ mt: 2, mb: 2, width: "80%", margin: "0 auto" }}>
           <Divider sx={{ mt: 2, mb: 2 }} />

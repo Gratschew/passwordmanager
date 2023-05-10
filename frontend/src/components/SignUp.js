@@ -21,6 +21,7 @@ import KeySafeLogo from "./KeySafeLogo.png";
 import Divider from "@mui/material/Divider";
 import { useTheme } from "@mui/material/styles";
 import { CircularProgress } from "@mui/material";
+import AuthSetup from "./AuthSetup";
 
 const SignUp = ({ setIsLoginHandler }) => {
   const auth = useSelector((state) => state.auth);
@@ -76,6 +77,10 @@ const SignUp = ({ setIsLoginHandler }) => {
   const handleSignUp = () => {
     dispatch(register({ username: username, password: password }));
   };
+
+  // if register was successful, move on to twofac setup
+  if (auth.twoFa.setupActive)
+    return <AuthSetup username={username} password={password}></AuthSetup>;
 
   return (
     <>
