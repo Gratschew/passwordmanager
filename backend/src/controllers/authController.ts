@@ -3,6 +3,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcryptjs';
 import User from '../models/User';
 import jwt from 'jsonwebtoken';
+import { addAesKey, getAesKey, removeAesKey } from '../models/AesKeys';
 
 import dotenv from 'dotenv';
 dotenv.config();
@@ -75,7 +76,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       res.status(400).json({messsage: 'incorrect email or password'});
       return;
     }
-  
+    
     const isValidPassword = await bcrypt.compare(password, user.password);
     
     if(!isValidPassword){
@@ -86,6 +87,9 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     if(!JWT_KEY){
       throw new Error('JWT_SECRET not set!')
     }
+    
+    await addAesKey(user.id,password)
+
     const token = jwt.sign({ userId: user._id }, JWT_KEY, {
       expiresIn: '1h',
     });
@@ -95,7 +99,8 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       sameSite: 'strict',
     });
     res.set('Cache-Control', 'no-store');
-     res.status(200).json({ message: 'success?' });
+    res.status(200).json({ message: 'success?' });
+
   }catch(error){
     res.status(500).json({ message: 'Internal server error' });
   }
@@ -104,9 +109,22 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
 export const logout = async (req: Request, res: Response): Promise<void> => {
   try{
-    
-    //res.cookie('token', '', { expires: new Date(0) });
     res.cookie('token', '', { expires: new Date(0)});
+    
+    const token = req.cookies.token;
+    if(!token){
+      res.status(500).json({ message: 'Internal server error' });
+      return ;
+    }
+    const secret = process.env.JWT_KEY;
+    if(!secret){
+      res.status(500).json({ message: 'Internal server error' });
+      return ;
+    }
+    const decoded: any = jwt.verify(token, secret);
+    const id =  decoded.userId;
+
+    removeAesKey(id);
     res.set('Cache-Control', 'no-store');
     res.status(200).json({ message: 'Logout successful' });
   }catch(error){
