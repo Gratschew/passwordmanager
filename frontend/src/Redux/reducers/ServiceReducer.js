@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import Cookies from "js-cookie";
 import axios from "axios";
-import { loginSuccess } from "./AuthReducer";
+import { twoFaLoginSuccess } from "./AuthReducer";
 const initialState = {
   data: [],
   loading: true,
@@ -100,7 +100,7 @@ export const getServices = () => async (dispatch) => {
       }
     );
     dispatch(getData(response.data));
-    dispatch(loginSuccess());
+    dispatch(twoFaLoginSuccess());
     dispatch(stopLoading());
   } catch (error) {
     dispatch(stopLoading());

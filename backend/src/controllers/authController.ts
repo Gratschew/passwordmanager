@@ -3,12 +3,8 @@ import express, { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcryptjs';
 import User from '../models/User';
 import jwt from 'jsonwebtoken';
-<<<<<<< HEAD
 import { authenticator } from 'otplib';
-=======
 import { addAesKey, getAesKey, removeAesKey } from '../models/AesKeys';
-
->>>>>>> 35b29d7e36c51bd38aa8989a9e7f3482804d0c15
 import dotenv from 'dotenv';
 import qrcode from 'qrcode';
 dotenv.config();
@@ -57,7 +53,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     const otpauth = authenticator.keyuri(username, "Password manager", secret);
     qrcode.toDataURL(otpauth, (err, imageUrl) => {
       if (err) {
-        res.status(400).json({messsage: 'Error with QR'});
+        res.status(400).json({message: 'Error with QR'});
         return;
       }
       res.json({secret, otpauth, imageUrl});
@@ -70,11 +66,8 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
 export const getUsers = async (req: Request, res: Response): Promise<void> => {
   try {
-<<<<<<< HEAD
     const secret = authenticator.generateSecret();
-=======
     res.setHeader('Cache-Control', 'no-store');
->>>>>>> 35b29d7e36c51bd38aa8989a9e7f3482804d0c15
     const users = await User.find();
     const token = authenticator.generate(secret);
     //const isValid = authenticator.check(token, secret);
@@ -82,7 +75,7 @@ export const getUsers = async (req: Request, res: Response): Promise<void> => {
     const otpauth = authenticator.keyuri("user", "service", secret);
     qrcode.toDataURL(otpauth, (err, imageUrl) => {
       if (err) {
-        res.status(400).json({messsage: 'Error with QR'});
+        res.status(400).json({message: 'Error with QR'});
         return;
       }
       res.json({secret, otpauth, imageUrl});
@@ -99,7 +92,7 @@ export const validateTwoFa = async (req: Request, res: Response): Promise<void> 
     const { secret, twoFaToken, username, password } = req.body;
     const user = await User.findOne({username});
     if(!user){
-      res.status(400).json({messsage: 'incorrect email or password'});
+      res.status(400).json({message: 'incorrect email or password'});
       return;
     }
   
@@ -110,19 +103,42 @@ export const validateTwoFa = async (req: Request, res: Response): Promise<void> 
       return;
     }
 
+    if(user.twoFaEnabled){
+      res.status(400).json({message: '2Fa already set up'});
+    }
+
     const isValid = authenticator.check(twoFaToken, secret);
     if (!isValid){
-      res.status(404).json({messsage: 'incorrect token'});
+      res.status(404).json({message: 'incorrect token'});
       return;
     }
 
-    User.findOneAndUpdate(
+    const x = User.findOneAndUpdate(
       { username: username }, 
       { twoFaSecret: secret, twoFaEnabled: true}, 
       { new: true } 
-    )
+    );
+    x.then(updatedUser => {
+      console.log("success");
+    })
+    .catch(error => {
+      console.error(error);
+    });
 
-    res.json({ message: '2FA enabled' });
+    if(!JWT_KEY){
+      throw new Error('JWT_SECRET not set!')
+    }
+    await addAesKey(user.id,password)
+
+    const token = jwt.sign({ userId: user.id }, JWT_KEY, {
+      expiresIn: '1h',
+    });
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: NODE_ENV === 'production',
+      sameSite: 'strict',
+    });
+    res.status(200).json({ message: '2FA enabled' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });
@@ -136,7 +152,7 @@ export const verifyTwoFa = async (req: Request, res: Response): Promise<void> =>
 
     const user = await User.findOne({username});
     if(!user){
-      res.status(400).json({messsage: 'incorrect email or password'});
+      res.status(400).json({message: 'incorrect email or password'});
       return;
     }
   
@@ -149,13 +165,15 @@ export const verifyTwoFa = async (req: Request, res: Response): Promise<void> =>
 
     const isValid = authenticator.check(twoFaToken, user.twoFaSecret);
     if (!isValid){
-      res.status(404).json({messsage: 'incorrect token'});
+      res.status(404).json({message: 'incorrect token'});
       return;
     }
   
     if(!JWT_KEY){
       throw new Error('JWT_SECRET not set!')
     }
+    await addAesKey(user.id,password)
+
     const token = jwt.sign({ userId: user.id }, JWT_KEY, {
       expiresIn: '1h',
     });
@@ -164,7 +182,7 @@ export const verifyTwoFa = async (req: Request, res: Response): Promise<void> =>
       secure: NODE_ENV === 'production',
       sameSite: 'strict',
     });
-     res.status(200).json({ message: 'success?' });
+     res.status(200).json({ message: 'success' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });
@@ -178,10 +196,11 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
   try{
     const { username, password } = req.body;
+    
 
     const user = await User.findOne({username});
     if(!user){
-      res.status(400).json({messsage: 'incorrect email or password'});
+      res.status(400).json({message: 'incorrect email or password'});
       return;
     }
     
@@ -200,29 +219,13 @@ export const login = async (req: Request, res: Response): Promise<void> => {
           console.log('Error with QR');
           return;
         }
-        res.status(400).json({messsage: 'TWOFA_DISABLED',secret, otpauth, imageUrl});
+        res.status(400).json({message: 'TWOFA_DISABLED',secret, otpauth, imageUrl});
       });
       return;
     }
 
     res.status(200).json({ message: 'log in success, move to 2fa' });
-  
-    if(!JWT_KEY){
-      throw new Error('JWT_SECRET not set!')
-    }
-    
-    await addAesKey(user.id,password)
-
-    const token = jwt.sign({ userId: user._id }, JWT_KEY, {
-      expiresIn: '1h',
-    });
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: NODE_ENV === 'production',
-      sameSite: 'strict',
-    });
-    res.set('Cache-Control', 'no-store');
-    res.status(200).json({ message: 'success?' });
+  return;
 
   }catch(error){
     res.status(500).json({ message: 'Internal server error' });
