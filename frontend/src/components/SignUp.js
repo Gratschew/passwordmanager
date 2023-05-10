@@ -20,7 +20,10 @@ import AuthErrorAlert from "./ErrorComponents/AuthError";
 import KeySafeLogo from "./KeySafeLogo.png";
 import Divider from "@mui/material/Divider";
 import { useTheme } from "@mui/material/styles";
+import { CircularProgress } from "@mui/material";
+
 const SignUp = ({ setIsLoginHandler }) => {
+  const auth = useSelector((state) => state.auth);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordStrength, setPasswordStrength] = useState(51);
@@ -198,7 +201,11 @@ const SignUp = ({ setIsLoginHandler }) => {
               disabled={!isPwValid() || !username}
               onClick={handleSignUp}
             >
-              Sign Up
+              {auth.loading ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                "Sign Up"
+              )}
             </Button>
             <Grid container>
               <Grid item xs>

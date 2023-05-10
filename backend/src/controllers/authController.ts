@@ -3,7 +3,12 @@ import express, { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcryptjs';
 import User from '../models/User';
 import jwt from 'jsonwebtoken';
+<<<<<<< HEAD
 import { authenticator } from 'otplib';
+=======
+import { addAesKey, getAesKey, removeAesKey } from '../models/AesKeys';
+
+>>>>>>> 35b29d7e36c51bd38aa8989a9e7f3482804d0c15
 import dotenv from 'dotenv';
 import qrcode from 'qrcode';
 dotenv.config();
@@ -65,7 +70,11 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
 export const getUsers = async (req: Request, res: Response): Promise<void> => {
   try {
+<<<<<<< HEAD
     const secret = authenticator.generateSecret();
+=======
+    res.setHeader('Cache-Control', 'no-store');
+>>>>>>> 35b29d7e36c51bd38aa8989a9e7f3482804d0c15
     const users = await User.find();
     const token = authenticator.generate(secret);
     //const isValid = authenticator.check(token, secret);
@@ -175,7 +184,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       res.status(400).json({messsage: 'incorrect email or password'});
       return;
     }
-  
+    
     const isValidPassword = await bcrypt.compare(password, user.password);
     
     if(!isValidPassword){
@@ -201,7 +210,10 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     if(!JWT_KEY){
       throw new Error('JWT_SECRET not set!')
     }
-    const token = jwt.sign({ userId: user.id }, JWT_KEY, {
+    
+    await addAesKey(user.id,password)
+
+    const token = jwt.sign({ userId: user._id }, JWT_KEY, {
       expiresIn: '1h',
     });
     res.cookie('token', token, {
@@ -209,7 +221,35 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       secure: NODE_ENV === 'production',
       sameSite: 'strict',
     });
-     res.status(200).json({ message: 'success?' });
+    res.set('Cache-Control', 'no-store');
+    res.status(200).json({ message: 'success?' });
+
+  }catch(error){
+    res.status(500).json({ message: 'Internal server error' });
+  }
+ 
+};
+
+export const logout = async (req: Request, res: Response): Promise<void> => {
+  try{
+    res.cookie('token', '', { expires: new Date(0)});
+    
+    const token = req.cookies.token;
+    if(!token){
+      res.status(500).json({ message: 'Internal server error' });
+      return ;
+    }
+    const secret = process.env.JWT_KEY;
+    if(!secret){
+      res.status(500).json({ message: 'Internal server error' });
+      return ;
+    }
+    const decoded: any = jwt.verify(token, secret);
+    const id =  decoded.userId;
+
+    removeAesKey(id);
+    res.set('Cache-Control', 'no-store');
+    res.status(200).json({ message: 'Logout successful' });
   }catch(error){
     res.status(500).json({ message: 'Internal server error' });
   }
