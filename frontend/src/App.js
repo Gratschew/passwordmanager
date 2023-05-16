@@ -1,10 +1,8 @@
-import logo from "./logo.svg";
 import "./App.css";
 import ButtonAppBar from "./components/Appbar";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { useState } from "react";
-import Container from "@mui/material/Container";
 import LogInHandler from "./components/LogInHandler";
 
 const darkTheme = createTheme({
@@ -16,8 +14,6 @@ const lightTheme = createTheme({
   palette: {
     mode: "light",
     primary: {
-      //main: "#058fab",
-      //main: "#0a6304",
       main: "#7b77f7",
     },
   },

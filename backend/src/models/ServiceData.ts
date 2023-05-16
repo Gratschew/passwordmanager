@@ -32,8 +32,6 @@ const ServiceDataSchema = new mongoose.Schema(
       const algorithm = 'aes-256-cbc';
 
       const key = getAesKey(this.owner.toString());
-
-      //const key = process.env.ENCRYPTION_KEY!;
       const iv = crypto.randomBytes(16);
       const cipher = crypto.createCipheriv(algorithm, key, iv);
       let encrypted = cipher.update(JSON.stringify(this.data), 'utf8', 'hex');
@@ -49,7 +47,6 @@ const ServiceDataSchema = new mongoose.Schema(
       const iv = Buffer.from(encryptedArray.shift(), 'hex');
       const encrypted = encryptedArray.join(':');
       const algorithm = 'aes-256-cbc';
-      //const key = process.env.ENCRYPTION_KEY!;
       const key = getAesKey(this.owner.toString());
       const decipher = crypto.createDecipheriv(algorithm, key, iv);
       let decrypted = decipher.update(encrypted, 'hex', 'utf8');

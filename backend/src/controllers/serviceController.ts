@@ -1,17 +1,9 @@
 
-import express, { Request, Response, NextFunction } from 'express';
-import bcrypt from 'bcryptjs';
-import User from '../models/User';
+import { Request, Response } from 'express';
 import ServiceData from '../models/ServiceData';
-import jwt from 'jsonwebtoken';
-
 import dotenv from 'dotenv';
-import { Db } from 'mongodb';
+
 dotenv.config();
-const {
-    JWT_KEY,
-    NODE_ENV
-  } = process.env;
 
   interface AuthRequest extends Request {
     user?: Record<string, any>;
