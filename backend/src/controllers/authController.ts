@@ -7,6 +7,7 @@ import { authenticator } from 'otplib';
 import { addAesKey, getAesKey, removeAesKey } from '../models/AesKeys';
 import dotenv from 'dotenv';
 import qrcode from 'qrcode';
+import { encrypt, decrypt } from '../utils/secretEncryption';
 dotenv.config();
 const {
     JWT_KEY,
@@ -64,27 +65,6 @@ export const register = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-export const getUsers = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const secret = authenticator.generateSecret();
-    res.setHeader('Cache-Control', 'no-store');
-    const users = await User.find();
-    const token = authenticator.generate(secret);
-    //const isValid = authenticator.check(token, secret);
-    //const isValid = authenticator.verify({ token, secret });
-    const otpauth = authenticator.keyuri("user", "service", secret);
-    qrcode.toDataURL(otpauth, (err, imageUrl) => {
-      if (err) {
-        res.status(400).json({message: 'Error with QR'});
-        return;
-      }
-      res.json({secret, otpauth, imageUrl});
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-};
 
 // Check if the user has setup 2FA properly after register
 export const validateTwoFa = async (req: Request, res: Response): Promise<void> => {
@@ -105,6 +85,7 @@ export const validateTwoFa = async (req: Request, res: Response): Promise<void> 
 
     if(user.twoFaEnabled){
       res.status(400).json({message: '2Fa already set up'});
+      return;
     }
 
     const isValid = authenticator.check(twoFaToken, secret);
@@ -113,17 +94,19 @@ export const validateTwoFa = async (req: Request, res: Response): Promise<void> 
       return;
     }
 
-    const x = User.findOneAndUpdate(
-      { username: username }, 
-      { twoFaSecret: secret, twoFaEnabled: true}, 
-      { new: true } 
+  try {
+    const encryptedSecret = await encrypt(secret, password);
+    const updatedUser = await User.findOneAndUpdate(
+      { username: username },
+      { twoFaSecret: encryptedSecret, twoFaEnabled: true },
+      { new: true }
     );
-    x.then(updatedUser => {
-      console.log("success");
-    })
-    .catch(error => {
-      console.error(error);
-    });
+    console.log('success');
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ message: '2FA secret encryption or update failed' });
+    return;
+  }
 
     if(!JWT_KEY){
       throw new Error('JWT_SECRET not set!')
@@ -163,12 +146,13 @@ export const verifyTwoFa = async (req: Request, res: Response): Promise<void> =>
       return;
     }
 
-    const isValid = authenticator.check(twoFaToken, user.twoFaSecret);
+    const decryptedSecret = await decrypt(user.twoFaSecret, password);
+    const isValid = authenticator.check(twoFaToken, decryptedSecret);
     if (!isValid){
       res.status(404).json({message: 'incorrect token'});
       return;
     }
-  
+
     if(!JWT_KEY){
       throw new Error('JWT_SECRET not set!')
     }
@@ -196,7 +180,6 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
   try{
     const { username, password } = req.body;
-    
 
     const user = await User.findOne({username});
     if(!user){
