@@ -5,7 +5,7 @@ import routes from './routes/routes';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-
+import rateLimit from 'express-rate-limit'
 dotenv.config();
 
 const app: Express = express();
@@ -19,6 +19,17 @@ app.use(cors({
   origin: allowedOrigins,
   credentials: true
 }));
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 15, // limit each IP to 20 requests per windowMs
+  message:
+		{message: 'Too many requests, try again later'},
+});
+
+// set rate limiter on login and 2fa verification API-endpoints
+app.use('/auth/login', limiter);
+app.use('/auth/verifyTwoFa', limiter);
 
 app.use('/', routes);
 initDb().then(()=>{

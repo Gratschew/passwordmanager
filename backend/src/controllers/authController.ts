@@ -1,10 +1,10 @@
 
-import express, { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import User from '../models/User';
 import jwt from 'jsonwebtoken';
 import { authenticator } from 'otplib';
-import { addAesKey, getAesKey, removeAesKey } from '../models/AesKeys';
+import { addAesKey, removeAesKey } from '../models/AesKeys';
 import dotenv from 'dotenv';
 import qrcode from 'qrcode';
 import { encrypt, decrypt } from '../utils/secretEncryption';
@@ -174,26 +174,20 @@ export const verifyTwoFa = async (req: Request, res: Response): Promise<void> =>
 };
 
 
-
-//rate limit requesteille?
 export const login = async (req: Request, res: Response): Promise<void> => {
 
   try{
     const { username, password } = req.body;
-
     const user = await User.findOne({username});
     if(!user){
       res.status(400).json({message: 'incorrect email or password'});
       return;
     }
-    
     const isValidPassword = await bcrypt.compare(password, user.password);
-    
     if(!isValidPassword){
       res.status(400).json({message: 'incorrect email or password'})
       return;
     }
-
     if (!user.twoFaEnabled){
       const secret = authenticator.generateSecret();
       const otpauth = authenticator.keyuri(username, "Password manager", secret);
@@ -202,18 +196,16 @@ export const login = async (req: Request, res: Response): Promise<void> => {
           console.log('Error with QR');
           return;
         }
-        res.status(400).json({message: 'TWOFA_DISABLED',secret, otpauth, imageUrl});
+        res.status(403).json({message: 'TWOFA_DISABLED',secret, otpauth, imageUrl});
       });
       return;
     }
-
     res.status(200).json({ message: 'log in success, move to 2fa' });
-  return;
+    return;
 
   }catch(error){
     res.status(500).json({ message: 'Internal server error' });
   }
- 
 };
 
 export const logout = async (req: Request, res: Response): Promise<void> => {
