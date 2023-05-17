@@ -1,5 +1,9 @@
 # Password Manager
 A Web application which uses secure programming principles to store user's log in information to different services.
+The application can be run with Docker Compose. Docker and Docker Compose must be installed in order to run the application.
+Run the application with command:
+
+    docker-compose up --build -d
 
 ## Development
 ### Docker Compose
