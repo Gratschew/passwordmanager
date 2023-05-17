@@ -5,6 +5,8 @@ Run the application with command:
 
     docker-compose up --build -d
 
+The application can then be used by accessing the frontend from http://localhost:3000/.
+
 ## Development
 ### Docker Compose
  The application can be run with Docker-compose. First, .env file must be added to the root of the project. For testing purposes, the .env file is added to this repository, eventhough in practice it shouldn't be. 
